@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { clipboardCopy } from '@/lib/clipboard'
 import { adminConfigApi } from '@/api/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -172,7 +173,7 @@ function regenerateToken() {
 
 async function copyText(text: string) {
     try {
-        await navigator.clipboard.writeText(text)
+        await clipboardCopy(text)
         showMessage('已复制')
     } catch { /* silent */ }
 }
