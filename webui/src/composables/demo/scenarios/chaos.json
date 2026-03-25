@@ -1,0 +1,158 @@
+{
+  "id": "chaos",
+  "name": "自修复演示",
+  "description": "去掉 Reviewer 会怎样？模拟一个缺少质检的 AI 团队，看巡查者如何发现异常并触发自修复。",
+  "icon": "ShieldAlert",
+  "duration": 35,
+  "agents": [
+    { "id": "planner", "name": "总编", "role": "planner", "avatar": "🧠" },
+    { "id": "writer", "name": "酱瓜", "role": "executor", "avatar": "✍️" },
+    { "id": "patrol", "name": "巡查", "role": "patrol", "avatar": "🛰️" }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "log",
+      "agent": "planner",
+      "content": "⚠️ 注意：本次演示已关闭 Reviewer，让我们看看会发生什么..."
+    },
+    {
+      "t": 1,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "thinking",
+      "message": "收到目标，开始拆解..."
+    },
+    {
+      "t": 3,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t1", "name": "撰写 AI 行业分析文章", "assignee": "writer" },
+      "message": "子任务分配给酱瓜"
+    },
+    {
+      "t": 4,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "任务已分配"
+    },
+    {
+      "t": 5,
+      "type": "agent_status",
+      "agent": "writer",
+      "status": "working",
+      "message": "开始写文章...（没有审查压力，随便写写）"
+    },
+    {
+      "t": 5,
+      "type": "task_status",
+      "task": "t1",
+      "status": "working"
+    },
+    {
+      "t": 8,
+      "type": "log",
+      "agent": "writer",
+      "content": "快速写完了一篇文章，没有仔细核实数据"
+    },
+    {
+      "t": 10,
+      "type": "log",
+      "agent": "writer",
+      "content": "「AI 将在 2025 年取代 90% 的工作岗位」← 数据完全编造"
+    },
+    {
+      "t": 11,
+      "type": "agent_status",
+      "agent": "writer",
+      "status": "done",
+      "message": "文章写完了！直接发布（无人审查）"
+    },
+    {
+      "t": 11,
+      "type": "task_status",
+      "task": "t1",
+      "status": "done"
+    },
+    {
+      "t": 12,
+      "type": "log",
+      "agent": "writer",
+      "content": "文章内容：引用了不存在的研究报告，数据来源无法验证，部分结论自相矛盾"
+    },
+    {
+      "t": 15,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "patrolling",
+      "message": "开始例行巡查..."
+    },
+    {
+      "t": 17,
+      "type": "log",
+      "agent": "patrol",
+      "content": "🚨 异常发现：任务 t1 已标记完成，但没有任何审查记录！"
+    },
+    {
+      "t": 19,
+      "type": "log",
+      "agent": "patrol",
+      "content": "🚨 质量检查：文章中发现 3 处事实错误、2 处数据编造"
+    },
+    {
+      "t": 21,
+      "type": "log",
+      "agent": "patrol",
+      "content": "🚨 严重警告：「90% 工作岗位被取代」无任何来源支撑"
+    },
+    {
+      "t": 23,
+      "type": "log",
+      "agent": "patrol",
+      "content": "🚨 风险评估：若此文章对外发布，将严重损害品牌公信力"
+    },
+    {
+      "t": 25,
+      "type": "log",
+      "agent": "patrol",
+      "content": "📋 巡查建议：立即撤回文章，恢复 Reviewer 角色，重新走审查流程"
+    },
+    {
+      "t": 27,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "done",
+      "message": "🚨 巡查报告：发现严重质量问题！"
+    },
+    {
+      "t": 28,
+      "type": "log",
+      "agent": "planner",
+      "content": "⚠️ 收到巡查警报：质量失控，需要紧急处理"
+    },
+    {
+      "t": 30,
+      "type": "log",
+      "agent": "planner",
+      "content": "🔴 结论：没有 Reviewer 的 AI 团队 = 没有质检的工厂。产出无法保证质量。"
+    },
+    {
+      "t": 32,
+      "type": "log",
+      "agent": "planner",
+      "content": "这就是 OpenMOSS 设计审查机制的原因 —— AI 也需要互相监督才能产出靠谱的内容"
+    },
+    {
+      "t": 35,
+      "type": "summary",
+      "data": {
+        "tasks_completed": 1,
+        "average_score": 0,
+        "tokens_used": 320000,
+        "rework_count": 0,
+        "time_saved": "产出不可用，需全部返工"
+      }
+    }
+  ]
+}

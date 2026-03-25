@@ -1,0 +1,375 @@
+{
+  "id": "cross-border",
+  "name": "跨境电商",
+  "description": "模拟跨境全球化运营：关键词调研 → 多语言 SEO 文章 → 翻译本地化 → 广告文案优化 → 数据监控，体验 AI 驱动的出海内容引擎。",
+  "icon": "Globe",
+  "duration": 60,
+  "agents": [
+    { "id": "planner", "name": "全球运营官", "role": "planner", "avatar": "🧠" },
+    { "id": "seo", "name": "SEO 写手", "role": "executor", "avatar": "📝" },
+    { "id": "translator", "name": "翻译官", "role": "executor", "avatar": "🌐" },
+    { "id": "adwriter", "name": "广告优化", "role": "executor", "avatar": "📢" },
+    { "id": "emailer", "name": "邮件营销", "role": "executor", "avatar": "📧" },
+    { "id": "reviewer", "name": "语言审核", "role": "reviewer", "avatar": "✅" },
+    { "id": "patrol", "name": "数据监控", "role": "patrol", "avatar": "🛰️" }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "thinking",
+      "message": "收到出海运营目标，规划多市场内容策略..."
+    },
+    {
+      "t": 2,
+      "type": "log",
+      "agent": "planner",
+      "content": "本周目标市场：美国、日本。需要 SEO 文章 + 广告文案 + EDM 各 2 套，英/日双语。"
+    },
+    {
+      "t": 3,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t1", "name": "英文 SEO 关键词调研 + 文章撰写", "assignee": "seo" },
+      "message": "子任务 1 → SEO 写手负责英文市场内容"
+    },
+    {
+      "t": 4,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t2", "name": "日语本地化翻译 + 文化适配", "assignee": "translator" },
+      "message": "子任务 2 → 翻译官负责日语本地化"
+    },
+    {
+      "t": 4,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t3", "name": "Google/Meta 广告文案撰写", "assignee": "adwriter" },
+      "message": "子任务 3 → 广告优化负责投放文案"
+    },
+    {
+      "t": 5,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t4", "name": "EDM 邮件内容编写", "assignee": "emailer" },
+      "message": "子任务 4 → 邮件营销负责 EDM 内容"
+    },
+    {
+      "t": 5,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "4 条产线已分配，多市场内容引擎启动"
+    },
+    {
+      "t": 6,
+      "type": "agent_status",
+      "agent": "seo",
+      "status": "working",
+      "message": "调研美国市场关键词..."
+    },
+    {
+      "t": 6,
+      "type": "task_status",
+      "task": "t1",
+      "status": "working"
+    },
+    {
+      "t": 9,
+      "type": "log",
+      "agent": "seo",
+      "content": "关键词调研完成：「AI agent platform」月搜索 12K、「multi agent collaboration」5.8K，竞争中等"
+    },
+    {
+      "t": 13,
+      "type": "log",
+      "agent": "seo",
+      "content": "2 篇 SEO 文章完成，已嵌入目标关键词，标题 + Meta Description + H1/H2 结构优化"
+    },
+    {
+      "t": 14,
+      "type": "agent_status",
+      "agent": "seo",
+      "status": "done",
+      "message": "英文 SEO 文章完成"
+    },
+    {
+      "t": 14,
+      "type": "task_status",
+      "task": "t1",
+      "status": "review"
+    },
+    {
+      "t": 15,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "审查英文 SEO 文章质量和关键词密度..."
+    },
+    {
+      "t": 17,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t1",
+      "result": "approved",
+      "score": 4.5,
+      "comment": "关键词布局合理，文章结构清晰，可读性好"
+    },
+    {
+      "t": 17,
+      "type": "score_change",
+      "agent": "seo",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 18,
+      "type": "agent_status",
+      "agent": "translator",
+      "status": "working",
+      "message": "开始日语本地化翻译..."
+    },
+    {
+      "t": 18,
+      "type": "task_status",
+      "task": "t2",
+      "status": "working"
+    },
+    {
+      "t": 21,
+      "type": "log",
+      "agent": "translator",
+      "content": "第 1 篇翻译完成，使用日本市场惯用表达，敬语体系适配 B2B 商务风格"
+    },
+    {
+      "t": 24,
+      "type": "log",
+      "agent": "translator",
+      "content": "2 篇日语翻译完成，提交审查"
+    },
+    {
+      "t": 25,
+      "type": "agent_status",
+      "agent": "translator",
+      "status": "done",
+      "message": "日语本地化完成"
+    },
+    {
+      "t": 25,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 26,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "审查日语翻译准确性和本地化程度..."
+    },
+    {
+      "t": 28,
+      "type": "log",
+      "agent": "reviewer",
+      "content": "第 1 篇敬语使用准确；第 2 篇有两处技术术语翻译不当：「orchestration」不应译为「オーケストレーション」，B2B 场景应使用「統合管理」"
+    },
+    {
+      "t": 29,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "rejected",
+      "score": 3.0,
+      "comment": "术语翻译不够本土化，专业场景需使用行业习惯表达"
+    },
+    {
+      "t": 29,
+      "type": "score_change",
+      "agent": "translator",
+      "delta": -2,
+      "reason": "审查驳回 -2"
+    },
+    {
+      "t": 30,
+      "type": "agent_status",
+      "agent": "translator",
+      "status": "reworking",
+      "message": "修正术语翻译，参考日本 SaaS 行业用语..."
+    },
+    {
+      "t": 30,
+      "type": "reflection",
+      "agent": "translator",
+      "content": "日语 B2B 翻译不能直接音译英文术语，要查阅目标行业的惯用日语表达"
+    },
+    {
+      "t": 33,
+      "type": "log",
+      "agent": "translator",
+      "content": "返工完成：修正了 5 处术语，改用日本 IT 行业惯用表达"
+    },
+    {
+      "t": 34,
+      "type": "agent_status",
+      "agent": "translator",
+      "status": "done",
+      "message": "修改完成，重新提交"
+    },
+    {
+      "t": 34,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 35,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "approved",
+      "score": 4.0,
+      "comment": "术语修正到位，本地化质量达标"
+    },
+    {
+      "t": 35,
+      "type": "score_change",
+      "agent": "translator",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 36,
+      "type": "agent_status",
+      "agent": "adwriter",
+      "status": "working",
+      "message": "撰写 Google Ads + Meta 广告文案..."
+    },
+    {
+      "t": 36,
+      "type": "task_status",
+      "task": "t3",
+      "status": "working"
+    },
+    {
+      "t": 39,
+      "type": "log",
+      "agent": "adwriter",
+      "content": "完成 4 组广告文案（英文），包含 A/B 两版标题、描述和 CTA"
+    },
+    {
+      "t": 40,
+      "type": "agent_status",
+      "agent": "adwriter",
+      "status": "done",
+      "message": "广告文案完成"
+    },
+    {
+      "t": 40,
+      "type": "task_status",
+      "task": "t3",
+      "status": "review"
+    },
+    {
+      "t": 41,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t3",
+      "result": "approved",
+      "score": 4.5,
+      "comment": "CTA 清晰，A/B 版本差异明显便于测试"
+    },
+    {
+      "t": 41,
+      "type": "score_change",
+      "agent": "adwriter",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 42,
+      "type": "agent_status",
+      "agent": "emailer",
+      "status": "working",
+      "message": "编写 EDM 邮件内容..."
+    },
+    {
+      "t": 42,
+      "type": "task_status",
+      "task": "t4",
+      "status": "working"
+    },
+    {
+      "t": 46,
+      "type": "log",
+      "agent": "emailer",
+      "content": "2 套 EDM 完成：产品介绍邮件 + 案例分享邮件，含个性化变量和退订链接"
+    },
+    {
+      "t": 47,
+      "type": "agent_status",
+      "agent": "emailer",
+      "status": "done",
+      "message": "EDM 邮件内容完成"
+    },
+    {
+      "t": 47,
+      "type": "task_status",
+      "task": "t4",
+      "status": "review"
+    },
+    {
+      "t": 48,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t4",
+      "result": "approved",
+      "score": 4.0,
+      "comment": "邮件结构清晰，CTA 引导自然"
+    },
+    {
+      "t": 48,
+      "type": "score_change",
+      "agent": "emailer",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 50,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "patrolling",
+      "message": "巡查各渠道数据表现..."
+    },
+    {
+      "t": 53,
+      "type": "log",
+      "agent": "patrol",
+      "content": "检查完毕：4/4 任务完成，1 次翻译返工已修复。SEO 文章索引提交成功，广告账户正常。"
+    },
+    {
+      "t": 55,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "done",
+      "message": "全渠道巡查完毕 ✓"
+    },
+    {
+      "t": 57,
+      "type": "log",
+      "agent": "planner",
+      "content": "任务完成！产出：2 篇 SEO 文章(英)、2 篇本地化翻译(日)、4 组广告文案、2 套 EDM，下周循环继续。"
+    },
+    {
+      "t": 60,
+      "type": "summary",
+      "data": {
+        "tasks_completed": 4,
+        "average_score": 4.0,
+        "tokens_used": 2200000,
+        "rework_count": 1,
+        "time_saved": "约 12 小时人力"
+      }
+    }
+  ]
+}

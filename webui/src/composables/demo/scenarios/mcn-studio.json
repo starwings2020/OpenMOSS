@@ -1,0 +1,386 @@
+{
+  "id": "mcn-studio",
+  "name": "MCN 内容工厂",
+  "description": "模拟 MCN 全流程：热点猎取 → 文案撰写 → 视觉生成 → 自动发布 → 数据监控，体验 AI 内容流水线 7×24 自动运转。",
+  "icon": "Clapperboard",
+  "duration": 58,
+  "agents": [
+    { "id": "planner", "name": "内容总监", "role": "planner", "avatar": "🧠" },
+    { "id": "hunter", "name": "热点猎手", "role": "executor", "avatar": "🔍" },
+    { "id": "copywriter", "name": "文案编辑", "role": "executor", "avatar": "✍️" },
+    { "id": "designer", "name": "视觉设计", "role": "executor", "avatar": "🎨" },
+    { "id": "publisher", "name": "发布运营", "role": "executor", "avatar": "📡" },
+    { "id": "reviewer", "name": "品控主编", "role": "reviewer", "avatar": "✅" },
+    { "id": "patrol", "name": "数据巡查", "role": "patrol", "avatar": "🛰️" }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "thinking",
+      "message": "收到每日内容目标，规划今日选题方向..."
+    },
+    {
+      "t": 2,
+      "type": "log",
+      "agent": "planner",
+      "content": "今日目标：围绕 AI 行业热点产出 3 条内容（图文+配图），发布到 WordPress。"
+    },
+    {
+      "t": 3,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t1", "name": "搜索今日 AI 热点素材", "assignee": "hunter" },
+      "message": "子任务 1 → 热点猎手搜索热梗和行业资讯"
+    },
+    {
+      "t": 4,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t2", "name": "撰写 3 篇热点短文", "assignee": "copywriter" },
+      "message": "子任务 2 → 文案编辑根据素材撰写文章"
+    },
+    {
+      "t": 4,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t3", "name": "为每篇文章生成配图", "assignee": "designer" },
+      "message": "子任务 3 → 视觉设计为每篇生成题图"
+    },
+    {
+      "t": 5,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t4", "name": "内容发布到 WordPress", "assignee": "publisher" },
+      "message": "子任务 4 → 发布运营负责上线发布"
+    },
+    {
+      "t": 5,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "4 个子任务已分配，流水线启动"
+    },
+    {
+      "t": 6,
+      "type": "agent_status",
+      "agent": "hunter",
+      "status": "working",
+      "message": "开始搜索各平台 AI 热点..."
+    },
+    {
+      "t": 6,
+      "type": "task_status",
+      "task": "t1",
+      "status": "working"
+    },
+    {
+      "t": 9,
+      "type": "log",
+      "agent": "hunter",
+      "content": "抓取到 35 条热点：OpenAI 发布新模型、Google DeepMind 突破、AI 监管新政..."
+    },
+    {
+      "t": 12,
+      "type": "log",
+      "agent": "hunter",
+      "content": "筛选出 3 个高热度选题，素材包已整理完成"
+    },
+    {
+      "t": 13,
+      "type": "agent_status",
+      "agent": "hunter",
+      "status": "done",
+      "message": "素材搜集完成，3 个选题已就绪"
+    },
+    {
+      "t": 13,
+      "type": "task_status",
+      "task": "t1",
+      "status": "review"
+    },
+    {
+      "t": 14,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "审查素材选题和数据源可靠性..."
+    },
+    {
+      "t": 16,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t1",
+      "result": "approved",
+      "score": 4.5,
+      "comment": "选题紧跟热点，素材来源可靠"
+    },
+    {
+      "t": 16,
+      "type": "score_change",
+      "agent": "hunter",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 17,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "素材审查通过 ✓"
+    },
+    {
+      "t": 17,
+      "type": "agent_status",
+      "agent": "copywriter",
+      "status": "working",
+      "message": "开始根据素材撰写 3 篇短文..."
+    },
+    {
+      "t": 17,
+      "type": "task_status",
+      "task": "t2",
+      "status": "working"
+    },
+    {
+      "t": 20,
+      "type": "log",
+      "agent": "copywriter",
+      "content": "第 1 篇完成：《OpenAI 新模型实测：上下文窗口扩展到 200 万》"
+    },
+    {
+      "t": 23,
+      "type": "log",
+      "agent": "copywriter",
+      "content": "第 2 篇完成：《Google DeepMind 的下一步棋：AI for Science》"
+    },
+    {
+      "t": 25,
+      "type": "log",
+      "agent": "copywriter",
+      "content": "3 篇短文全部完成，提交审查"
+    },
+    {
+      "t": 26,
+      "type": "agent_status",
+      "agent": "copywriter",
+      "status": "done",
+      "message": "3 篇文案全部完成"
+    },
+    {
+      "t": 26,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 27,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "逐篇审查文案质量..."
+    },
+    {
+      "t": 29,
+      "type": "log",
+      "agent": "reviewer",
+      "content": "第 1 篇优秀，第 2 篇观点有偏差需要修正，第 3 篇通过"
+    },
+    {
+      "t": 30,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "rejected",
+      "score": 3.5,
+      "comment": "第 2 篇 DeepMind 文章观点偏差，需核实数据源并修正论述"
+    },
+    {
+      "t": 30,
+      "type": "score_change",
+      "agent": "copywriter",
+      "delta": -2,
+      "reason": "审查驳回 -2"
+    },
+    {
+      "t": 31,
+      "type": "agent_status",
+      "agent": "copywriter",
+      "status": "reworking",
+      "message": "第 2 篇被驳回，修正观点和数据..."
+    },
+    {
+      "t": 31,
+      "type": "reflection",
+      "agent": "copywriter",
+      "content": "总结：行业分析类文章需要更严谨的数据支撑，不能仅凭热度推测"
+    },
+    {
+      "t": 34,
+      "type": "log",
+      "agent": "copywriter",
+      "content": "返工完成：重新核实了论文数据，修正了结论部分"
+    },
+    {
+      "t": 35,
+      "type": "agent_status",
+      "agent": "copywriter",
+      "status": "done",
+      "message": "返工完成，重新提交审查"
+    },
+    {
+      "t": 35,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 36,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "复审修改后的文案..."
+    },
+    {
+      "t": 37,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "approved",
+      "score": 4.0,
+      "comment": "修正后数据准确，论述合理"
+    },
+    {
+      "t": 37,
+      "type": "score_change",
+      "agent": "copywriter",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 38,
+      "type": "agent_status",
+      "agent": "designer",
+      "status": "working",
+      "message": "为 3 篇文章生成配图..."
+    },
+    {
+      "t": 38,
+      "type": "task_status",
+      "task": "t3",
+      "status": "working"
+    },
+    {
+      "t": 41,
+      "type": "log",
+      "agent": "designer",
+      "content": "3 张题图生成完成：科技蓝调+数据可视化风格"
+    },
+    {
+      "t": 42,
+      "type": "agent_status",
+      "agent": "designer",
+      "status": "done",
+      "message": "配图生成完成"
+    },
+    {
+      "t": 42,
+      "type": "task_status",
+      "task": "t3",
+      "status": "review"
+    },
+    {
+      "t": 43,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t3",
+      "result": "approved",
+      "score": 4.5,
+      "comment": "配图风格统一，视觉质感好"
+    },
+    {
+      "t": 43,
+      "type": "score_change",
+      "agent": "designer",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 44,
+      "type": "agent_status",
+      "agent": "publisher",
+      "status": "working",
+      "message": "开始发布到 WordPress..."
+    },
+    {
+      "t": 44,
+      "type": "task_status",
+      "task": "t4",
+      "status": "working"
+    },
+    {
+      "t": 47,
+      "type": "log",
+      "agent": "publisher",
+      "content": "3 篇文章已全部发布上线，SEO 标签和分类已设置"
+    },
+    {
+      "t": 48,
+      "type": "agent_status",
+      "agent": "publisher",
+      "status": "done",
+      "message": "发布完成 ✓"
+    },
+    {
+      "t": 48,
+      "type": "task_status",
+      "task": "t4",
+      "status": "done"
+    },
+    {
+      "t": 48,
+      "type": "score_change",
+      "agent": "publisher",
+      "delta": 5,
+      "reason": "发布任务完成 +5"
+    },
+    {
+      "t": 50,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "patrolling",
+      "message": "巡检已发布内容的数据表现..."
+    },
+    {
+      "t": 52,
+      "type": "log",
+      "agent": "patrol",
+      "content": "检查 3 篇文章状态：全部在线正常，无 404 错误，SEO 索引已提交"
+    },
+    {
+      "t": 54,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "done",
+      "message": "巡查完毕，所有内容正常 ✓"
+    },
+    {
+      "t": 56,
+      "type": "log",
+      "agent": "planner",
+      "content": "今日任务完成！3 篇文章已上线。明日循环任务将自动启动新一轮内容产出。"
+    },
+    {
+      "t": 58,
+      "type": "summary",
+      "data": {
+        "tasks_completed": 4,
+        "average_score": 4.1,
+        "tokens_used": 1800000,
+        "rework_count": 1,
+        "time_saved": "约 6 小时人力"
+      }
+    }
+  ]
+}

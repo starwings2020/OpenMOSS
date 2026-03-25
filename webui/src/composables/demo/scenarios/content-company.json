@@ -1,0 +1,322 @@
+{
+  "id": "content-company",
+  "name": "AI 内容创意",
+  "description": "模拟内容创作团队：选题策划 → 资料采集 → 文章撰写 → 质量审查，体验 AI 编辑部如何自动产出一篇深度文章。",
+  "icon": "Newspaper",
+  "duration": 52,
+  "agents": [
+    { "id": "planner", "name": "总编", "role": "planner", "avatar": "🧠" },
+    { "id": "researcher", "name": "小吴", "role": "executor", "avatar": "🔍" },
+    { "id": "writer", "name": "酱瓜", "role": "executor", "avatar": "✍️" },
+    { "id": "reviewer", "name": "审查", "role": "reviewer", "avatar": "✅" },
+    { "id": "patrol", "name": "巡查", "role": "patrol", "avatar": "🛰️" }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "thinking",
+      "message": "收到目标，正在分析任务需求..."
+    },
+    {
+      "t": 2,
+      "type": "log",
+      "agent": "planner",
+      "content": "目标：撰写一篇关于 AI Agent 发展趋势的深度文章。我来拆解一下..."
+    },
+    {
+      "t": 3,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t1", "name": "搜集 AI 行业最新热点", "assignee": "researcher" },
+      "message": "子任务 1 → 小吴负责搜集资料"
+    },
+    {
+      "t": 4,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t2", "name": "撰写 AI Agent 趋势分析文章", "assignee": "writer" },
+      "message": "子任务 2 → 酱瓜负责写文章"
+    },
+    {
+      "t": 5,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "任务拆解完成，2 个子任务已分配"
+    },
+    {
+      "t": 6,
+      "type": "agent_status",
+      "agent": "researcher",
+      "status": "working",
+      "message": "开始搜索 AI 行业最新动态..."
+    },
+    {
+      "t": 6,
+      "type": "task_status",
+      "task": "t1",
+      "status": "working"
+    },
+    {
+      "t": 8,
+      "type": "log",
+      "agent": "researcher",
+      "content": "搜索中...发现 OpenAI、Anthropic、Google 近期都有重大更新"
+    },
+    {
+      "t": 10,
+      "type": "log",
+      "agent": "researcher",
+      "content": "找到 12 条相关新闻，正在筛选高质量信源..."
+    },
+    {
+      "t": 12,
+      "type": "log",
+      "agent": "researcher",
+      "content": "筛选完成：5 条核心新闻 + 3 篇专家分析，整理成摘要"
+    },
+    {
+      "t": 13,
+      "type": "agent_status",
+      "agent": "researcher",
+      "status": "done",
+      "message": "信息采集完成，已整理 8 条来源"
+    },
+    {
+      "t": 13,
+      "type": "task_status",
+      "task": "t1",
+      "status": "review"
+    },
+    {
+      "t": 14,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "正在审查小吴的信息采集结果..."
+    },
+    {
+      "t": 16,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t1",
+      "result": "approved",
+      "score": 4.0,
+      "comment": "信源充足，质量不错"
+    },
+    {
+      "t": 16,
+      "type": "score_change",
+      "agent": "researcher",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 16,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "小吴的采集通过了 ✓"
+    },
+    {
+      "t": 17,
+      "type": "agent_status",
+      "agent": "writer",
+      "status": "working",
+      "message": "开始撰写文章，参考小吴的资料..."
+    },
+    {
+      "t": 17,
+      "type": "task_status",
+      "task": "t2",
+      "status": "working"
+    },
+    {
+      "t": 19,
+      "type": "log",
+      "agent": "writer",
+      "content": "正在构思文章大纲：行业现状 → 核心趋势 → 未来展望"
+    },
+    {
+      "t": 22,
+      "type": "log",
+      "agent": "writer",
+      "content": "初稿完成，约 1200 字，包含 3 个核心观点"
+    },
+    {
+      "t": 24,
+      "type": "agent_status",
+      "agent": "writer",
+      "status": "done",
+      "message": "文章初稿完成，提交审查"
+    },
+    {
+      "t": 24,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 25,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "正在审查酱瓜的文章..."
+    },
+    {
+      "t": 27,
+      "type": "log",
+      "agent": "reviewer",
+      "content": "文章结构清晰，但部分观点缺乏数据支撑，信息来源引用不足"
+    },
+    {
+      "t": 29,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "rejected",
+      "score": 3.0,
+      "comment": "信息来源不足，需要补充具体数据和案例支撑"
+    },
+    {
+      "t": 29,
+      "type": "score_change",
+      "agent": "writer",
+      "delta": -2,
+      "reason": "审查驳回 -2"
+    },
+    {
+      "t": 30,
+      "type": "agent_status",
+      "agent": "writer",
+      "status": "reworking",
+      "message": "文章被驳回了...需要补充数据"
+    },
+    {
+      "t": 31,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "等待酱瓜修改后重新提交"
+    },
+    {
+      "t": 32,
+      "type": "reflection",
+      "agent": "writer",
+      "content": "下次写文章前先确认数据源是否充分，不能只靠观点撑"
+    },
+    {
+      "t": 33,
+      "type": "log",
+      "agent": "writer",
+      "content": "返工中：补充 3 组行业数据 + 2 个具体案例"
+    },
+    {
+      "t": 36,
+      "type": "log",
+      "agent": "writer",
+      "content": "修改完成，新增了 GPT-5 发布影响分析和 Agent 框架对比数据"
+    },
+    {
+      "t": 37,
+      "type": "agent_status",
+      "agent": "writer",
+      "status": "done",
+      "message": "修改完成，重新提交审查"
+    },
+    {
+      "t": 37,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 38,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "重新审查酱瓜修改后的文章..."
+    },
+    {
+      "t": 40,
+      "type": "log",
+      "agent": "reviewer",
+      "content": "数据充实多了，论证有力，整体质量大幅提升"
+    },
+    {
+      "t": 41,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "approved",
+      "score": 4.5,
+      "comment": "质量大幅提升！数据详实，论证有力"
+    },
+    {
+      "t": 41,
+      "type": "score_change",
+      "agent": "writer",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 42,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "酱瓜的文章通过了！质量很好"
+    },
+    {
+      "t": 43,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "patrolling",
+      "message": "开始例行巡查..."
+    },
+    {
+      "t": 45,
+      "type": "log",
+      "agent": "patrol",
+      "content": "检查任务状态：2/2 子任务已完成，无异常"
+    },
+    {
+      "t": 47,
+      "type": "log",
+      "agent": "patrol",
+      "content": "检查审查记录：1 次驳回 → 1 次返工通过，流程正常"
+    },
+    {
+      "t": 48,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "done",
+      "message": "巡查完毕，一切正常 ✓"
+    },
+    {
+      "t": 49,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "所有子任务完成，准备交付成果"
+    },
+    {
+      "t": 50,
+      "type": "log",
+      "agent": "planner",
+      "content": "任务完成！产出：1 篇 AI Agent 趋势深度分析文章（1500字），包含行业数据和案例"
+    },
+    {
+      "t": 52,
+      "type": "summary",
+      "data": {
+        "tasks_completed": 2,
+        "average_score": 4.25,
+        "tokens_used": 850000,
+        "rework_count": 1,
+        "time_saved": "约 3 小时人力"
+      }
+    }
+  ]
+}

@@ -19,6 +19,7 @@ const agentSummaries = ref<AgentSummary[]>([])
 const flashingAgentIds = ref<Set<string>>(new Set())
 const selectedAgentId = ref<string | null>(null)
 const paused = ref(false)
+const autoPaused = ref(false)
 const newIds = ref<Set<string>>(new Set())
 const mobileSheetOpen = ref(false)
 const sidebarCollapsed = ref(false)
@@ -26,6 +27,8 @@ const timelineRef = ref<HTMLElement | null>(null)
 const feedListKey = ref(0)
 
 let pollTimer: ReturnType<typeof setInterval> | null = null
+let autoTimer: ReturnType<typeof setTimeout> | null = null
+const AUTO_PAUSE_MS = 5 * 60 * 1000 // 5 分钟
 
 const filteredActivities = computed(() => {
     if (!selectedAgentId.value) return activities.value
@@ -99,11 +102,26 @@ async function init() {
 
 function startPolling() {
     pollTimer = setInterval(() => {
-        if (!paused.value && enabled.value) {
+        if (!paused.value && !autoPaused.value && enabled.value) {
             loadLogs(true)
             loadAgentSummaries()
         }
     }, 5000)
+
+    // 5 分钟后自动暂停，不做任何判断
+    autoTimer = setTimeout(() => {
+        autoPaused.value = true
+    }, AUTO_PAUSE_MS)
+}
+
+function resumeFromAutoPause() {
+    autoPaused.value = false
+    paused.value = false
+    // 恢复后再给 5 分钟
+    if (autoTimer) clearTimeout(autoTimer)
+    autoTimer = setTimeout(() => {
+        autoPaused.value = true
+    }, AUTO_PAUSE_MS)
 }
 
 const switchingAgent = ref(false)
@@ -123,7 +141,10 @@ function handleSelectAgent(agentId: string | null) {
 }
 
 onMounted(() => { init(); startPolling() })
-onUnmounted(() => { if (pollTimer) clearInterval(pollTimer) })
+onUnmounted(() => {
+    if (pollTimer) clearInterval(pollTimer)
+    if (autoTimer) clearTimeout(autoTimer)
+})
 </script>
 
 <template>
@@ -252,9 +273,13 @@ onUnmounted(() => { if (pollTimer) clearInterval(pollTimer) })
                 class="shrink-0 flex items-center justify-center gap-2 h-6 text-[10px] text-muted-foreground/30 border-t border-border/20">
                 <span class="flex items-center gap-1">
                     <span class="inline-block w-1 h-1 rounded-full"
-                        :class="paused ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'" />
-                    {{ paused ? '已暂停' : '实时更新中' }}
+                        :class="(paused || autoPaused) ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'" />
+                    {{ autoPaused ? '已自动暂停（5分钟未操作）' : paused ? '已暂停' : '实时更新中' }}
                 </span>
+                <template v-if="autoPaused">
+                    <span>·</span>
+                    <button class="text-primary hover:underline cursor-pointer" @click="resumeFromAutoPause">点击恢复</button>
+                </template>
                 <span>·</span>
                 <span class="tabular-nums">{{ agentSummaries.length }} 个 Agent</span>
             </footer>

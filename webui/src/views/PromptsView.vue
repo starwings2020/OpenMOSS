@@ -557,12 +557,18 @@ async function copyWithPrefix() {
   }
 }
 
-// 普通复制（仅提示词）
+// 普通复制（仅提示词，去除对接引导）
 async function copyToClipboard() {
   try {
-    await clipboardCopy(composedPrompt.value)
+    let text = composedPrompt.value
+    // 去除对接指引部分
+    const idx = text.indexOf(ONBOARDING_MARKER)
+    if (idx > 0) {
+      text = text.substring(0, idx).trim()
+    }
+    await clipboardCopy(text)
     copied.value = true
-    showMessage('已复制到剪贴板')
+    showMessage('已复制到剪贴板（仅提示词）')
     setTimeout(() => { copied.value = false }, 2000)
   } catch {
     showMessage('复制失败，请手动选中复制', 'error')

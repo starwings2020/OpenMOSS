@@ -1,0 +1,367 @@
+{
+  "id": "ecommerce",
+  "name": "AI 电商运营",
+  "description": "模拟电商运营团队：竞品分析 + 详情页 + 营销推文三线并行，看多个 AI 员工如何同时协作完成新品上架。",
+  "icon": "ShoppingCart",
+  "duration": 55,
+  "agents": [
+    { "id": "planner", "name": "运营总监", "role": "planner", "avatar": "🧠" },
+    { "id": "analyst", "name": "分析员", "role": "executor", "avatar": "🔍" },
+    { "id": "copyA", "name": "文案A", "role": "executor", "avatar": "✍️" },
+    { "id": "copyB", "name": "文案B", "role": "executor", "avatar": "📢" },
+    { "id": "reviewer", "name": "审查", "role": "reviewer", "avatar": "✅" },
+    { "id": "patrol", "name": "巡查", "role": "patrol", "avatar": "🛰️" }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "thinking",
+      "message": "收到新品上架需求，开始规划..."
+    },
+    {
+      "t": 2,
+      "type": "log",
+      "agent": "planner",
+      "content": "目标：为新品智能手表撰写商品详情页 + 营销文案。需要竞品分析、详情页、推广文三个方向"
+    },
+    {
+      "t": 3,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t1", "name": "竞品分析与卖点提取", "assignee": "analyst" },
+      "message": "子任务 1 → 分析员负责竞品调研"
+    },
+    {
+      "t": 4,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t2", "name": "商品详情页文案", "assignee": "copyA" },
+      "message": "子任务 2 → 文案A 负责详情页"
+    },
+    {
+      "t": 5,
+      "type": "task_created",
+      "agent": "planner",
+      "task": { "id": "t3", "name": "社交媒体营销推文", "assignee": "copyB" },
+      "message": "子任务 3 → 文案B 负责营销推文"
+    },
+    {
+      "t": 5,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "3 个子任务已分配，团队开始工作"
+    },
+    {
+      "t": 6,
+      "type": "agent_status",
+      "agent": "analyst",
+      "status": "working",
+      "message": "开始竞品分析..."
+    },
+    {
+      "t": 6,
+      "type": "task_status",
+      "task": "t1",
+      "status": "working"
+    },
+    {
+      "t": 7,
+      "type": "agent_status",
+      "agent": "copyA",
+      "status": "working",
+      "message": "开始构思详情页框架..."
+    },
+    {
+      "t": 7,
+      "type": "task_status",
+      "task": "t2",
+      "status": "working"
+    },
+    {
+      "t": 8,
+      "type": "log",
+      "agent": "analyst",
+      "content": "对比 Apple Watch、华为 GT5、小米手环...提取差异化卖点"
+    },
+    {
+      "t": 9,
+      "type": "log",
+      "agent": "copyA",
+      "content": "先搭详情页结构：产品亮点 → 核心参数 → 使用场景 → 用户评价"
+    },
+    {
+      "t": 12,
+      "type": "log",
+      "agent": "analyst",
+      "content": "分析完成：3 个竞品对比、5 个核心卖点（续航/屏幕/健康监测/轻薄/价格）"
+    },
+    {
+      "t": 13,
+      "type": "agent_status",
+      "agent": "analyst",
+      "status": "done",
+      "message": "竞品分析完成，提交审查"
+    },
+    {
+      "t": 13,
+      "type": "task_status",
+      "task": "t1",
+      "status": "review"
+    },
+    {
+      "t": 14,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "审查分析员的竞品报告..."
+    },
+    {
+      "t": 15,
+      "type": "log",
+      "agent": "copyA",
+      "content": "参考分析员的竞品数据，优化卖点描述，强调续航 14 天和血氧监测"
+    },
+    {
+      "t": 16,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t1",
+      "result": "approved",
+      "score": 4.2,
+      "comment": "竞品对比详实，卖点提炼准确"
+    },
+    {
+      "t": 16,
+      "type": "score_change",
+      "agent": "analyst",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 16,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "竞品报告通过 ✓"
+    },
+    {
+      "t": 18,
+      "type": "agent_status",
+      "agent": "copyB",
+      "status": "working",
+      "message": "开始写社交媒体营销推文..."
+    },
+    {
+      "t": 18,
+      "type": "task_status",
+      "task": "t3",
+      "status": "working"
+    },
+    {
+      "t": 20,
+      "type": "log",
+      "agent": "copyB",
+      "content": "撰写小红书风格种草文：「2026年最值得入手的智能手表」"
+    },
+    {
+      "t": 22,
+      "type": "agent_status",
+      "agent": "copyA",
+      "status": "done",
+      "message": "详情页文案完成，提交审查"
+    },
+    {
+      "t": 22,
+      "type": "task_status",
+      "task": "t2",
+      "status": "review"
+    },
+    {
+      "t": 23,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "审查文案A的详情页..."
+    },
+    {
+      "t": 25,
+      "type": "agent_status",
+      "agent": "copyB",
+      "status": "done",
+      "message": "营销推文完成，提交审查"
+    },
+    {
+      "t": 25,
+      "type": "task_status",
+      "task": "t3",
+      "status": "review"
+    },
+    {
+      "t": 27,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t2",
+      "result": "approved",
+      "score": 4.0,
+      "comment": "详情页结构完整，卖点突出，可上线"
+    },
+    {
+      "t": 27,
+      "type": "score_change",
+      "agent": "copyA",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 28,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "审查文案B的营销推文..."
+    },
+    {
+      "t": 30,
+      "type": "log",
+      "agent": "reviewer",
+      "content": "推文语气太正式了，不像社交媒体风格，缺少互动感"
+    },
+    {
+      "t": 32,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t3",
+      "result": "rejected",
+      "score": 2.5,
+      "comment": "语气太正式，不像种草文，需要改为活泼口语风"
+    },
+    {
+      "t": 32,
+      "type": "score_change",
+      "agent": "copyB",
+      "delta": -2,
+      "reason": "审查驳回 -2"
+    },
+    {
+      "t": 33,
+      "type": "agent_status",
+      "agent": "copyB",
+      "status": "reworking",
+      "message": "推文被驳回...调整语气风格"
+    },
+    {
+      "t": 33,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "等待文案B修改"
+    },
+    {
+      "t": 34,
+      "type": "reflection",
+      "agent": "copyB",
+      "content": "社交媒体文案要用口语化表达，多用 emoji 和互动句式"
+    },
+    {
+      "t": 36,
+      "type": "log",
+      "agent": "copyB",
+      "content": "返工中：改为「姐妹们！这块表也太绝了吧 😍」风格，增加互动提问"
+    },
+    {
+      "t": 39,
+      "type": "agent_status",
+      "agent": "copyB",
+      "status": "done",
+      "message": "推文修改完成，重新提交"
+    },
+    {
+      "t": 39,
+      "type": "task_status",
+      "task": "t3",
+      "status": "review"
+    },
+    {
+      "t": 40,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "reviewing",
+      "message": "重新审查文案B..."
+    },
+    {
+      "t": 42,
+      "type": "review",
+      "agent": "reviewer",
+      "task": "t3",
+      "result": "approved",
+      "score": 4.5,
+      "comment": "风格到位！语气活泼有互动感，很适合种草"
+    },
+    {
+      "t": 42,
+      "type": "score_change",
+      "agent": "copyB",
+      "delta": 5,
+      "reason": "审查通过 +5"
+    },
+    {
+      "t": 43,
+      "type": "agent_status",
+      "agent": "reviewer",
+      "status": "idle",
+      "message": "全部文案审查完毕 ✓"
+    },
+    {
+      "t": 44,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "patrolling",
+      "message": "开始例行巡查..."
+    },
+    {
+      "t": 46,
+      "type": "log",
+      "agent": "patrol",
+      "content": "检查任务状态：3/3 子任务已完成"
+    },
+    {
+      "t": 48,
+      "type": "log",
+      "agent": "patrol",
+      "content": "检查审查记录：1 次驳回（文案B）→ 修改后通过，流程正常"
+    },
+    {
+      "t": 49,
+      "type": "agent_status",
+      "agent": "patrol",
+      "status": "done",
+      "message": "巡查完毕，一切正常 ✓"
+    },
+    {
+      "t": 50,
+      "type": "log",
+      "agent": "planner",
+      "content": "任务完成！产出：竞品分析报告 + 商品详情页 + 社媒营销推文"
+    },
+    {
+      "t": 52,
+      "type": "agent_status",
+      "agent": "planner",
+      "status": "done",
+      "message": "全部交付完成 🎉"
+    },
+    {
+      "t": 55,
+      "type": "summary",
+      "data": {
+        "tasks_completed": 3,
+        "average_score": 3.8,
+        "tokens_used": 1200000,
+        "rework_count": 1,
+        "time_saved": "约 5 小时人力"
+      }
+    }
+  ]
+}

@@ -45,7 +45,7 @@ database:
 
 # 工作目录
 workspace:
-  root: "/Users/xiaohuang/Desktop/TaskWork"
+  root: "/home/your-user/TaskWork"
 
 # WebUI 配置
 webui:
