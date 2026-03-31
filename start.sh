@@ -197,7 +197,7 @@ for i in $(seq 1 30); do
     fi
 
     # 检查 HTTP 是否就绪
-    if curl -sf "http://localhost:$PORT/api/health" > /dev/null 2>&1; then
+    if curl -sf --connect-timeout 2 --max-time 3 "http://127.0.0.1:$PORT/api/health" > /dev/null 2>&1; then
         echo ""
         echo ""
         info "✅ OpenMOSS 已启动！"
