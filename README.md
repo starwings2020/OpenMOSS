@@ -694,8 +694,8 @@ npm run lint
 ### 基础设施
 
 - [ ] 支持 PostgreSQL / MySQL
-- [ ] Docker 一键部署
-- [ ] CI/CD 自动构建前端
+- [x] Docker 一键部署
+- [x] CI/CD 自动构建（GitHub Actions + GHCR）
 - [ ] 多语言支持（i18n）
 - [x] English README
 
