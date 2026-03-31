@@ -171,19 +171,36 @@ mkdir -p "$LOG_DIR" "$OPENMOSS_DIR/data"
 
 cd "$OPENMOSS_DIR"
 
-info "启动服务 (端口: $PORT)..."
 
-PYTHONUNBUFFERED=1 nohup "$VENV_DIR/bin/python" -m uvicorn app.main:app \
-    --host 0.0.0.0 --port "$PORT" \
-    > "$LOG_DIR/server.log" 2>&1 &
+# 用 setsid 启动，使 uvicorn 脱离当前进程组
+# 这样 Ctrl+C 或关闭终端不会杀死服务
+if command -v setsid >/dev/null 2>&1; then
+    setsid "$VENV_DIR/bin/python" -m uvicorn app.main:app \
+        --host 0.0.0.0 --port "$PORT" \
+        > "$LOG_DIR/server.log" 2>&1 &
+else
+    nohup "$VENV_DIR/bin/python" -m uvicorn app.main:app \
+        --host 0.0.0.0 --port "$PORT" \
+        > "$LOG_DIR/server.log" 2>&1 &
+fi
 
 SERVER_PID=$!
 disown $SERVER_PID 2>/dev/null || true
 echo $SERVER_PID > "$PID_FILE"
 
-# ---------- 等待服务就绪 ----------
+# ---------- 检查端口是否就绪 ----------
+check_port() {
+    # 方法 1: bash /dev/tcp（最可靠）
+    (echo > /dev/tcp/127.0.0.1/$PORT) 2>/dev/null && return 0
+    # 方法 2: curl（跳过代理）
+    curl -sf --noproxy '*' --connect-timeout 1 --max-time 2 "http://127.0.0.1:$PORT/api/health" > /dev/null 2>&1 && return 0
+    # 方法 3: ss/netstat
+    ss -tlnp 2>/dev/null | grep -q ":$PORT " && return 0
+    return 1
+}
+
 printf "  等待服务启动"
-for i in $(seq 1 30); do
+for i in $(seq 1 15); do
     # 先检查进程是否还活着
     if ! kill -0 "$SERVER_PID" 2>/dev/null; then
         echo ""
@@ -197,8 +214,8 @@ for i in $(seq 1 30); do
         exit 1
     fi
 
-    # 检查 HTTP 是否就绪
-    if curl -sf --connect-timeout 2 --max-time 3 "http://127.0.0.1:$PORT/api/health" > /dev/null 2>&1; then
+    # 检查端口是否就绪
+    if check_port; then
         echo ""
         echo ""
         info "✅ OpenMOSS 已启动！"
@@ -216,17 +233,19 @@ for i in $(seq 1 30); do
     sleep 1
 done
 
+# 15 秒后进程还活着就算成功（可能启动慢）
 echo ""
-warn "⏱ 服务仍在启动中（已等待 30 秒）"
-echo ""
-
-# 进程还活着但接口没就绪，可能只是启动慢
 if kill -0 "$SERVER_PID" 2>/dev/null; then
-    echo "  服务进程正在运行 (PID: $SERVER_PID)，可能需要更多时间"
-    echo "  请稍后访问: http://localhost:$PORT"
     echo ""
-    echo "  查看实时日志: tail -f $LOG_DIR/server.log"
+    info "✅ OpenMOSS 已在后台启动 (PID: $SERVER_PID)"
+    echo ""
+    echo "  🌐 访问地址:   http://localhost:$PORT"
+    echo "  📋 API 文档:   http://localhost:$PORT/docs"
+    echo "  📁 日志文件:   $LOG_DIR/server.log"
     echo "  🛑 停止服务:   ./stop.sh"
+    echo ""
+    info "如果无法访问，请稍等几秒或查看日志: tail -f $LOG_DIR/server.log"
+    echo ""
 else
     error "❌ 服务进程已退出"
     echo ""
@@ -239,4 +258,3 @@ else
     rm -f "$PID_FILE"
     exit 1
 fi
-
