@@ -256,12 +256,14 @@ docker compose up -d --build
 After startup:
 
 1. Open `http://localhost:6565`
-2. On first visit you'll be redirected to the setup wizard
-3. After initialization you can sign in to the admin panel
+2. On first launch, the backend automatically downloads the WebUI frontend from GitHub Release (requires internet)
+3. On first visit you'll be redirected to the setup wizard
+4. After initialization you can sign in to the admin panel
 
 Default persisted paths in the Docker setup:
 
 - `./docker-data/config/config.yaml` — config file, auto-generated on first container start
+- `./docker-data/static/` — WebUI frontend files (auto-downloaded on first start, persisted across restarts)
 - `./data/` — SQLite database
 - `./workspace/` — agent workspace
 
@@ -302,7 +304,10 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 6565
 ```
 
-On first launch, open `http://localhost:6565` — you'll be redirected to the **Setup Wizard**, which guides you through:
+On first launch:
+
+- The backend automatically downloads the WebUI frontend from GitHub Release (requires internet, ~30 seconds)
+- Open `http://localhost:6565` — you'll be redirected to the **Setup Wizard**, which guides you through:
 
 - **Admin password** — password for WebUI login
 - **Project name** — displayed in WebUI and rule templates

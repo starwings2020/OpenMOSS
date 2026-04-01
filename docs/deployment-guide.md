@@ -255,12 +255,14 @@ docker compose up -d --build
 启动完成后：
 
 1. 打开 `http://localhost:6565`
-2. 首次访问会自动跳转到初始化向导
-3. 初始化完成后即可进入登录页和管理后台
+2. 首次启动时，后端会自动从 GitHub Release 下载 WebUI 前端（需联网）
+3. 首次访问会自动跳转到初始化向导
+4. 初始化完成后即可进入登录页和管理后台
 
 Docker 方案的默认持久化目录：
 
 - `./docker-data/config/config.yaml` — 配置文件（容器首次启动时自动生成）
+- `./docker-data/static/` — WebUI 前端文件（首次启动时自动下载，持久化后重启不再重复下载）
 - `./data/` — SQLite 数据库
 - `./workspace/` — Agent 工作目录
 
@@ -301,7 +303,10 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 6565
 ```
 
-首次启动后，打开 `http://localhost:6565`——会自动跳转到**初始化向导**，引导你完成：
+首次启动后：
+
+- 后端会自动从 GitHub Release 下载 WebUI 前端（需联网，约 30 秒）
+- 打开 `http://localhost:6565`——会自动跳转到**初始化向导**，引导你完成：
 
 - **管理员密码** — 登录 WebUI 的密码
 - **项目名称** — 在 WebUI 和规则模板中显示
