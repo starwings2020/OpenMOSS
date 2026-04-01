@@ -239,9 +239,53 @@ skills/
 
 ## 5. 开始部署
 
-### 方案 A：Docker 一键部署（推荐）
+> 三种部署方式任选其一，推荐从上到下选择：
 
-如果你只是想尽快把 OpenMOSS 跑起来，最简单的方式就是直接使用 Docker Compose：
+### 方案 A：一键脚本部署（最简单）
+
+一行命令完成下载、安装、启动全流程，适合绝大多数用户：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/uluckyXH/OpenMOSS/main/setup.sh | bash
+```
+
+脚本会自动完成：
+- 下载最新代码到 `./openmoss/` 目录
+- 检测 Python 3.10+ 并创建虚拟环境
+- 安装依赖
+- 启动服务
+- 首次启动时自动从 GitHub Release 下载 WebUI 前端
+
+**更新也用同一条命令**——脚本会自动检测已有安装，只更新代码、保留数据和配置。
+
+启动成功后：
+
+1. 打开 `http://localhost:6565`
+2. 首次访问会自动跳转到初始化向导
+3. 初始化完成后即可进入管理后台
+
+常用命令：
+
+```bash
+cd openmoss
+
+# 停止服务
+./stop.sh
+
+# 重新启动
+./start.sh
+
+# 查看日志
+tail -f logs/server.log
+```
+
+> 可通过 `OPENMOSS_PORT=6566 ./start.sh` 自定义端口。
+
+---
+
+### 方案 B：Docker 部署
+
+适合有 Docker 环境的用户，容器化管理更方便：
 
 ```bash
 # 克隆仓库
@@ -255,12 +299,14 @@ docker compose up -d --build
 启动完成后：
 
 1. 打开 `http://localhost:6565`
-2. 首次访问会自动跳转到初始化向导
-3. 初始化完成后即可进入登录页和管理后台
+2. 首次启动时，后端会自动从 GitHub Release 下载 WebUI 前端（需联网）
+3. 首次访问会自动跳转到初始化向导
+4. 初始化完成后即可进入登录页和管理后台
 
 Docker 方案的默认持久化目录：
 
 - `./docker-data/config/config.yaml` — 配置文件（容器首次启动时自动生成）
+- `./docker-data/static/` — WebUI 前端文件（首次启动时自动下载，持久化后重启不再重复下载）
 - `./data/` — SQLite 数据库
 - `./workspace/` — Agent 工作目录
 
@@ -279,7 +325,9 @@ docker compose down
 
 > 如果你的 Agent 需要从公网访问 OpenMOSS，请在初始化向导或设置页中填写 `server.external_url`。
 
-### 方案 B：手动部署
+---
+
+### 方案 C：手动部署
 
 > ⚠️ 请按顺序执行以下步骤，不要跳步。
 
@@ -301,7 +349,10 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 6565
 ```
 
-首次启动后，打开 `http://localhost:6565`——会自动跳转到**初始化向导**，引导你完成：
+首次启动后：
+
+- 后端会自动从 GitHub Release 下载 WebUI 前端（需联网，约 30 秒）
+- 打开 `http://localhost:6565`——会自动跳转到**初始化向导**，引导你完成：
 
 - **管理员密码** — 登录 WebUI 的密码
 - **项目名称** — 在 WebUI 和规则模板中显示

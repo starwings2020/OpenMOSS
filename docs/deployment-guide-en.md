@@ -240,9 +240,53 @@ What each role does:
 
 ## 5. Start Deploying
 
-### Option A: Docker One-Command Deployment (Recommended)
+> Choose one of three deployment methods. We recommend going top to bottom:
 
-If you want to get OpenMOSS running quickly, the simplest path is Docker Compose:
+### Option A: One-Click Script (Easiest)
+
+A single command handles download, install, and startup — recommended for most users:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/uluckyXH/OpenMOSS/main/setup.sh | bash
+```
+
+The script automatically:
+- Downloads the latest code to `./openmoss/`
+- Detects Python 3.10+ and creates a virtual environment
+- Installs dependencies
+- Starts the server
+- Auto-downloads the WebUI frontend from GitHub Release on first launch
+
+**Updates use the same command** — the script detects existing installations and only updates code while preserving data and config.
+
+After successful startup:
+
+1. Open `http://localhost:6565`
+2. On first visit you'll be redirected to the setup wizard
+3. After initialization you can access the admin panel
+
+Useful commands:
+
+```bash
+cd openmoss
+
+# Stop the service
+./stop.sh
+
+# Restart
+./start.sh
+
+# View logs
+tail -f logs/server.log
+```
+
+> Customize port with `OPENMOSS_PORT=6566 ./start.sh`.
+
+---
+
+### Option B: Docker Deployment
+
+For users with Docker environments — containerized management is more convenient:
 
 ```bash
 # Clone the repository
@@ -256,12 +300,14 @@ docker compose up -d --build
 After startup:
 
 1. Open `http://localhost:6565`
-2. On first visit you'll be redirected to the setup wizard
-3. After initialization you can sign in to the admin panel
+2. On first launch, the backend automatically downloads the WebUI frontend from GitHub Release (requires internet)
+3. On first visit you'll be redirected to the setup wizard
+4. After initialization you can sign in to the admin panel
 
 Default persisted paths in the Docker setup:
 
 - `./docker-data/config/config.yaml` — config file, auto-generated on first container start
+- `./docker-data/static/` — WebUI frontend files (auto-downloaded on first start, persisted across restarts)
 - `./data/` — SQLite database
 - `./workspace/` — agent workspace
 
@@ -280,7 +326,9 @@ docker compose up -d --build
 
 > If your agents need to access OpenMOSS from outside the host, set `server.external_url` in the setup wizard or settings page.
 
-### Option B: Manual Deployment
+---
+
+### Option C: Manual Deployment
 
 > ⚠️ Follow these steps in order — don't skip any.
 
@@ -302,7 +350,10 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 6565
 ```
 
-On first launch, open `http://localhost:6565` — you'll be redirected to the **Setup Wizard**, which guides you through:
+On first launch:
+
+- The backend automatically downloads the WebUI frontend from GitHub Release (requires internet, ~30 seconds)
+- Open `http://localhost:6565` — you'll be redirected to the **Setup Wizard**, which guides you through:
 
 - **Admin password** — password for WebUI login
 - **Project name** — displayed in WebUI and rule templates
