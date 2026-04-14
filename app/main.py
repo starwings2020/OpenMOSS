@@ -80,7 +80,9 @@ def _auto_block_stuck_assigned_subtasks(timeout_seconds: int = 300):
             )
             .all()
         )
+        print(f"[Patrol] cutoff={cutoff.isoformat(sep=' ', timespec='seconds')} candidates={len(candidates)}")
         if not candidates:
+            print("[Patrol] 本轮无候选 assigned 掉单")
             return 0
 
         patrol_agent = db.query(Agent).filter(Agent.role == "patrol").first()
