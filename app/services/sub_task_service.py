@@ -9,6 +9,7 @@ from app.models.sub_task import SubTask
 from app.models.task import Task
 from app.models.module import Module
 from app.models.agent import Agent
+from app.models.patrol_record import PatrolRecord
 
 
 # 状态机：合法的状态转移
@@ -229,7 +230,7 @@ def block_sub_task(db: Session, sub_task_id: str) -> SubTask:
 
 
 def reassign_sub_task(db: Session, sub_task_id: str, agent_id: str) -> SubTask:
-    """重新分配：blocked → pending（规划师操作）"""
+    """重新分配：blocked → pending（规划师操作），并闭环相关 patrol_record。"""
     # 校验 Agent 存在
     agent = db.query(Agent).filter(Agent.id == agent_id).first()
     if not agent:
@@ -239,6 +240,22 @@ def reassign_sub_task(db: Session, sub_task_id: str, agent_id: str) -> SubTask:
     sub_task.assigned_agent = agent_id
     sub_task.status = "assigned"
     sub_task.current_session_id = None
+
+    open_patrol_records = (
+        db.query(PatrolRecord)
+        .filter(
+            PatrolRecord.sub_task_id == sub_task_id,
+            PatrolRecord.status == "open",
+        )
+        .all()
+    )
+    for record in open_patrol_records:
+        existing_action = (record.action_taken or "").strip()
+        planner_note = f"规划师已重新分配给 Agent {agent.name}（{agent.id}），巡查记录闭环。"
+        record.status = "resolved"
+        record.resolved_at = datetime.now()
+        record.action_taken = (existing_action + "\n" + planner_note).strip() if existing_action else planner_note
+
     db.commit()
     db.refresh(sub_task)
     return sub_task
