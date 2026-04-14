@@ -9,10 +9,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, Request
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+import threading
 
 from app.database import init_db
 from app.config import config
 from app.auth.dependencies import get_current_agent
+from app.services.notification_service import notification_service
 from app.routers import (
     admin,
     admin_agents,
@@ -138,6 +140,20 @@ def _auto_block_stuck_assigned_subtasks(timeout_seconds: int = 300):
         if blocked_count:
             db.commit()
             print(f"[Patrol] 自动标记 {blocked_count} 条卡单为 blocked，并补写 patrol_record")
+            try:
+                title = f"[{config.project_name}] 巡查发现卡单 {blocked_count} 条"
+                body = "巡查自动发现 assigned 掉单并已写 patrol_record，随后标记为 blocked。请规划者尽快接手处理。"
+                threading.Thread(
+                    target=lambda: asyncio.run(notification_service.send_event(
+                        "patrol_alert",
+                        title,
+                        body,
+                        extra={"blocked_count": blocked_count, "source": "auto_block_stuck_assigned_subtasks"},
+                    )),
+                    daemon=True,
+                ).start()
+            except Exception as e:
+                print(f"[Notification] patrol_alert 触发失败: {e}")
         else:
             db.rollback()
         return blocked_count

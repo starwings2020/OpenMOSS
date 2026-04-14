@@ -4,6 +4,8 @@
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import Session
+import asyncio
+import threading
 
 from app.models.sub_task import SubTask
 from app.models.task import Task
@@ -11,6 +13,8 @@ from app.models.module import Module
 from app.models.agent import Agent
 from app.models.patrol_record import PatrolRecord
 from app.models.activity_log import ActivityLog
+from app.config import config
+from app.services.notification_service import notification_service
 
 
 # 状态机：合法的状态转移
@@ -267,6 +271,22 @@ def reassign_sub_task(db: Session, sub_task_id: str, agent_id: str, planner_id: 
 
     db.commit()
     db.refresh(sub_task)
+
+    try:
+        title = f"[{config.project_name}] blocked 子任务已重新分配"
+        body = f"规划师已将 blocked 子任务重新分配给 Agent {agent.name}（{agent.id}），并已闭环对应 patrol_record。"
+        threading.Thread(
+            target=lambda: asyncio.run(notification_service.send_event(
+                "patrol_alert",
+                title,
+                body,
+                extra={"sub_task_id": sub_task_id, "assigned_agent": agent.id, "action": "planner_reassign"},
+            )),
+            daemon=True,
+        ).start()
+    except Exception as e:
+        print(f"[Notification] planner reassign 通知触发失败: {e}")
+
     return sub_task
 
 
