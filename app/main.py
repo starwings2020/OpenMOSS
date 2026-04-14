@@ -71,16 +71,28 @@ def _auto_block_stuck_assigned_subtasks(timeout_seconds: int = 300):
     db = SessionLocal()
     try:
         cutoff = datetime.now() - timedelta(seconds=timeout_seconds)
-        candidates = (
+        raw_candidates = (
             db.query(SubTask)
             .filter(
                 SubTask.status == "assigned",
                 SubTask.current_session_id.is_(None),
-                SubTask.created_at <= cutoff,
             )
             .all()
         )
-        print(f"[Patrol] cutoff={cutoff.isoformat(sep=' ', timespec='seconds')} candidates={len(candidates)}")
+
+        candidates = []
+        for sub_task in raw_candidates:
+            created_at = sub_task.created_at
+            if isinstance(created_at, str):
+                normalized = created_at.replace("T", " ")
+                try:
+                    created_at = datetime.fromisoformat(normalized)
+                except ValueError:
+                    continue
+            if created_at and created_at <= cutoff:
+                candidates.append(sub_task)
+
+        print(f"[Patrol] cutoff={cutoff.isoformat(sep=' ', timespec='seconds')} raw_candidates={len(raw_candidates)} candidates={len(candidates)}")
         if not candidates:
             print("[Patrol] 本轮无候选 assigned 掉单")
             return 0
