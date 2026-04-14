@@ -101,12 +101,14 @@ def _auto_block_stuck_assigned_subtasks(timeout_seconds: int = 300):
         blocked_count = 0
 
         for sub_task in candidates:
+            print(f"[Patrol] inspect sub_task id={sub_task.id} name={sub_task.name} created_at={sub_task.created_at}")
             has_activity = (
                 db.query(ActivityLog.id)
                 .filter(ActivityLog.sub_task_id == sub_task.id)
                 .first()
             )
             if has_activity:
+                print(f"[Patrol] skip sub_task id={sub_task.id} reason=has_activity")
                 continue
 
             existing_open_record = (
@@ -119,6 +121,7 @@ def _auto_block_stuck_assigned_subtasks(timeout_seconds: int = 300):
                 .first()
             )
             if existing_open_record:
+                print(f"[Patrol] skip sub_task id={sub_task.id} reason=open_orphan_record")
                 continue
 
             patrol_agent_id = patrol_agent.id if patrol_agent else sub_task.assigned_agent
