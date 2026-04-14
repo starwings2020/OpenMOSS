@@ -2,7 +2,9 @@
 OpenMOSS 任务调度中间件 — 主入口
 """
 import os
+import asyncio
 import traceback
+from datetime import datetime, timedelta
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends, Request
 from fastapi.responses import JSONResponse, FileResponse
@@ -38,7 +40,6 @@ from app.middleware.request_logger import RequestLoggerMiddleware
 
 def _cleanup_old_request_logs():
     """启动时清理过期的请求日志"""
-    from datetime import datetime, timedelta
     from app.database import SessionLocal
     from app.models.request_log import RequestLog
 
@@ -57,6 +58,107 @@ def _cleanup_old_request_logs():
         db.close()
 
 
+def _auto_block_stuck_assigned_subtasks(timeout_seconds: int = 300):
+    """自动巡查掉单：assigned 且无 session / 无活动日志，超时后自动标 blocked。"""
+    from app.database import SessionLocal
+    from app.models.sub_task import SubTask
+    from app.models.activity_log import ActivityLog
+    from app.models.agent import Agent
+    from app.models.patrol_record import PatrolRecord
+
+    db = SessionLocal()
+    try:
+        cutoff = datetime.now() - timedelta(seconds=timeout_seconds)
+        candidates = (
+            db.query(SubTask)
+            .filter(
+                SubTask.status == "assigned",
+                SubTask.current_session_id.is_(None),
+                SubTask.created_at <= cutoff,
+            )
+            .all()
+        )
+        if not candidates:
+            return 0
+
+        patrol_agent = db.query(Agent).filter(Agent.role == "patrol").first()
+        blocked_count = 0
+
+        for sub_task in candidates:
+            has_activity = (
+                db.query(ActivityLog.id)
+                .filter(ActivityLog.sub_task_id == sub_task.id)
+                .first()
+            )
+            if has_activity:
+                continue
+
+            existing_open_record = (
+                db.query(PatrolRecord.id)
+                .filter(
+                    PatrolRecord.sub_task_id == sub_task.id,
+                    PatrolRecord.status == "open",
+                    PatrolRecord.type == "orphan",
+                )
+                .first()
+            )
+            if existing_open_record:
+                continue
+
+            patrol_agent_id = patrol_agent.id if patrol_agent else sub_task.assigned_agent
+            description = (
+                f"自动巡查发现疑似掉单：子任务处于 assigned 已超过 {timeout_seconds} 秒，"
+                f"且 current_session_id 为空、无活动日志。"
+            )
+            action_taken = "已写入 patrol_record，并自动标记为 blocked，等待规划师介入重新分配。"
+
+            db.add(PatrolRecord(
+                type="orphan",
+                severity="critical",
+                sub_task_id=sub_task.id,
+                agent_id=patrol_agent_id,
+                description=description,
+                action_taken=action_taken,
+                status="open",
+            ))
+
+            sub_task.status = "blocked"
+            sub_task.current_session_id = None
+            blocked_count += 1
+
+            if patrol_agent_id:
+                db.add(ActivityLog(
+                    agent_id=patrol_agent_id,
+                    sub_task_id=sub_task.id,
+                    action="patrol",
+                    summary=f"{description}{action_taken}",
+                    session_id=None,
+                ))
+
+        if blocked_count:
+            db.commit()
+            print(f"[Patrol] 自动标记 {blocked_count} 条卡单为 blocked，并补写 patrol_record")
+        else:
+            db.rollback()
+        return blocked_count
+    except Exception as e:
+        db.rollback()
+        print(f"[Patrol] 自动卡单巡查失败: {e}")
+        return 0
+    finally:
+        db.close()
+
+
+async def _stuck_subtask_patrol_loop(interval_seconds: int = 60, timeout_seconds: int = 300):
+    """后台定时巡查 assigned 掉单。"""
+    while True:
+        try:
+            _auto_block_stuck_assigned_subtasks(timeout_seconds=timeout_seconds)
+        except Exception as e:
+            print(f"[Patrol] 后台巡查异常: {e}")
+        await asyncio.sleep(interval_seconds)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """应用生命周期：启动时初始化数据库"""
@@ -65,15 +167,25 @@ async def lifespan(app: FastAPI):
     # 清理过期请求日志
     _cleanup_old_request_logs()
 
+    # 启动时先做一次掉单巡查
+    _auto_block_stuck_assigned_subtasks()
+
     # 确保 WebUI 前端存在（首次部署 / Docker 启动时自动从 GitHub Release 拉取）
     from app.services.webui_updater import webui_updater
     await webui_updater.ensure_webui_exists()
+
+    patrol_task = asyncio.create_task(_stuck_subtask_patrol_loop())
 
     print(f"[{config.project_name}] 服务启动 → http://{config.server_host}:{config.server_port}")
     print(f"[{config.project_name}] 数据库: {config.database_path}")
     print(f"[{config.project_name}] 工作目录: {config.workspace_root}")
     print(f"[{config.project_name}] 注册令牌: {config.registration_token}")
     yield
+    patrol_task.cancel()
+    try:
+        await patrol_task
+    except asyncio.CancelledError:
+        pass
     print(f"[{config.project_name}] 服务关闭")
 
 
@@ -187,4 +299,3 @@ async def serve_spa(full_path: str):
     return JSONResponse(status_code=404, content={"detail": "WebUI not found"})
 
 print(f"[WebUI] 已挂载前端: {os.path.abspath(_webui_dist)}")
-
