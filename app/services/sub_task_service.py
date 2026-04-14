@@ -10,6 +10,7 @@ from app.models.task import Task
 from app.models.module import Module
 from app.models.agent import Agent
 from app.models.patrol_record import PatrolRecord
+from app.models.activity_log import ActivityLog
 
 
 # 状态机：合法的状态转移
@@ -229,7 +230,7 @@ def block_sub_task(db: Session, sub_task_id: str) -> SubTask:
     return sub_task
 
 
-def reassign_sub_task(db: Session, sub_task_id: str, agent_id: str) -> SubTask:
+def reassign_sub_task(db: Session, sub_task_id: str, agent_id: str, planner_id: str = None) -> SubTask:
     """重新分配：blocked → pending（规划师操作），并闭环相关 patrol_record。"""
     # 校验 Agent 存在
     agent = db.query(Agent).filter(Agent.id == agent_id).first()
@@ -249,12 +250,20 @@ def reassign_sub_task(db: Session, sub_task_id: str, agent_id: str) -> SubTask:
         )
         .all()
     )
+    planner_note = f"规划师已重新分配给 Agent {agent.name}（{agent.id}），巡查记录闭环。"
     for record in open_patrol_records:
         existing_action = (record.action_taken or "").strip()
-        planner_note = f"规划师已重新分配给 Agent {agent.name}（{agent.id}），巡查记录闭环。"
         record.status = "resolved"
         record.resolved_at = datetime.now()
         record.action_taken = (existing_action + "\n" + planner_note).strip() if existing_action else planner_note
+
+    db.add(ActivityLog(
+        agent_id=planner_id or agent.id,
+        sub_task_id=sub_task_id,
+        action="plan",
+        summary=f"接手 blocked 子任务并重新分配：已将子任务重新指派给 Agent {agent.name}（{agent.id}），相关巡查记录已闭环。",
+        session_id=None,
+    ))
 
     db.commit()
     db.refresh(sub_task)

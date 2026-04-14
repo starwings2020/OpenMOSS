@@ -305,7 +305,7 @@ async def reassign_sub_task(
 ):
     """规划师重新分配：blocked → assigned"""
     try:
-        return sub_task_service.reassign_sub_task(db, sub_task_id, req.agent_id)
+        return sub_task_service.reassign_sub_task(db, sub_task_id, req.agent_id, planner_id=agent.id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
