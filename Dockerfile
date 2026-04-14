@@ -12,7 +12,8 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
-# static/ (WebUI 前端) 由服务启动时自动从 GitHub Release 拉取，无需内置
+COPY static ./static
+# static/ 作为内置兜底，启动时自动更新仍可覆盖
 COPY skills ./skills
 COPY prompts ./prompts
 COPY rules ./rules
