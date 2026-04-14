@@ -5,6 +5,7 @@
 - 支持 notification.enabled / channels / events
 - 支持 channel 格式：
   - webhook:<url>
+  - feishu-webhook:<url>
 - 对未知 channel 类型只记日志，不抛异常
 - 失败不影响主事务；调用方应在提交后触发
 """
@@ -53,6 +54,21 @@ class NotificationService:
                     async with httpx.AsyncClient(timeout=10.0) as client:
                         resp = await client.post(url, json=payload)
                         resp.raise_for_status()
+                    result["sent"] += 1
+                elif channel.startswith("feishu-webhook:"):
+                    url = channel[len("feishu-webhook:"):]
+                    feishu_payload = {
+                        "msg_type": "text",
+                        "content": {
+                            "text": f"{title}\n\n{body}\n\n事件: {event}\n详情: {payload['extra']}"
+                        },
+                    }
+                    async with httpx.AsyncClient(timeout=10.0) as client:
+                        resp = await client.post(url, json=feishu_payload)
+                        resp.raise_for_status()
+                        data = resp.json()
+                        if isinstance(data, dict) and data.get("code", 0) not in (0, None):
+                            raise RuntimeError(f"feishu webhook error: {data}")
                     result["sent"] += 1
                 else:
                     # B 主先落最小可用通道；未知类型留给 A 辅 / 后续扩展

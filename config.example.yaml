@@ -19,7 +19,8 @@ agent:
 notification:
   enabled: false
   # 目标渠道：
-  # - "webhook:https://example.com/webhook"         # 后端直发（当前已实现）
+  # - "webhook:https://example.com/webhook"         # 通用后端直发
+# - "feishu-webhook:https://open.feishu.cn/open-apis/bot/v2/hook/xxx"  # 飞书群机器人 webhook
   # - "chat:oc_1f99abbba2bf0f8733377893d976ffa5"   # 预留给 Agent 侧读取后自行发送
   # - "user:ou_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"        # 预留给 Agent 侧读取后自行发送
   channels: []
