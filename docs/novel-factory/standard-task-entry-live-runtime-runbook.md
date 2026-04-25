@@ -185,6 +185,7 @@ python3 "$REPO_ROOT/scripts/novel_factory/run_standard_task_flow.py" \
 - `docs/novel-factory/live-standard-flow-silent-verify-20260425-231617.md`
   - 证明一键 runner 已能在 6565 live 上完成“创建 + closeout + 静默收口”
   - 结果：`13 done + review_count=13 + notification_audit=0`
+- 以上 live 样本证明的是一键 runner 已具备现场闭环能力；它们不是“整个小说工厂运行层已收成统一稳定自动生产线”的同义句。
 
 ### 3.4 静默 closeout / 静默 one-click
 
@@ -251,6 +252,8 @@ PYTHONPATH="$REPO_ROOT" python3 "$REPO_ROOT/scripts/novel_factory/run_standard_t
 
 ### 3.6 正常通知版 vs 静默验证版
 
+两种模式都走同一套标准入口 / closeout 脚本；区别只在**是否真的 dispatch notification**，所以验收口径也要跟着切开。
+
 | 项 | 正常通知版 | 静默验证版 |
 | --- | --- | --- |
 | 入口脚本 | `run_standard_task_flow.py` / `closeout_standard_task.py` | 同一套脚本 |
@@ -259,6 +262,8 @@ PYTHONPATH="$REPO_ROOT" python3 "$REPO_ROOT/scripts/novel_factory/run_standard_t
 | `closeout.notification_events` | 有事件明细 | `[]` |
 | `closeout.notification_drain` | 会等待后台投递收尾 | `{"suppressed": true, "waited": false, "pending_jobs": 0}` |
 | `notification_audit` | 会新增该任务对应记录 | 应为 `0` |
+| stdout / 日志观感 | 可能看到通知相关结构化日志与投递收尾信息 | 仍可能看到 `background_dispatch_suppressed`，但这不代表通知真的发出 |
+| 核心验收重点 | 既要看 `13 done + review/reward`，也要看 `task_completed / all_done` 是否真正落到通知链 | 只看 `13 done + review/reward + workspace closeout`，不要再拿通知链结果当通过条件 |
 | 适用场景 | 真正联调通知链路、验收群消息 | 只验骨架链闭环、回归 closeout、避免污染通知面板 |
 | 现场证据 | `live-standard-flow-verify-20260425-195221.md` | `live-standard-flow-silent-verify-20260425-231617.md` |
 
